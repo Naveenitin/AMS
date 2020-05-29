@@ -1,0 +1,44 @@
+<%- include("partials/header.ejs") %>
+<script>
+    function show(){
+		var subs=document.querySelectorAll("data");
+		subs.forEach(element => {
+			element.classList.add('hidden');
+			
+		});
+
+		var sub=document.querySelector("select");
+		console.log(sub.value);
+		var table=document.querySelector(".s"+sub.value);
+  		table.classList.toggle('hidden');
+  	}
+</script>
+<div class="ui container center aligned">
+	<div class="ui form">
+		<div class="fields">
+		  <select class="ui dropdown eleven wide field">
+			<option value="">Select Subject</option>
+			<% data.forEach((sub)=>{ %>
+				<option value="<%- sub.code %>"><%= sub.code %> <%= sub.name %></option>
+				<% }) %>
+		  </select>
+		  <div class="one wide field"></div>
+		  <button class="four wide field" onclick="show()">Submit</button>
+		</div>
+	  </div>    
+<div class="ui container center aligned">
+  <% data.forEach((sub)=>{ %>
+    <div class="s<%= sub.code %> hidden data" >
+    <% sub.attendance.forEach((record)=>{ %>
+      <div>
+        <%= record.id %>
+        <%= record.name %>
+        <%= record.date %>
+        <%= record.a %>
+      </div>
+    <% }) %>
+    </div>
+  <% }) %>
+</div>
+
+<%- include("partials/footer.ejs") %>
