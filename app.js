@@ -44,8 +44,12 @@ var data=[
     }
 ];
 
+var date=[
+    "2:5:19","20:5:19","21:5:19","22:5:19","24:5:19","25:5:19","27:5:19"
+];
+
 app.get("/faculty",(req,res)=>{
-    res.render("faculty",{data:data});
+    res.render("faculty",{data:data,date:date});
 
 });
 

@@ -4,41 +4,71 @@
 		var subs=document.querySelectorAll("data");
 		subs.forEach(element => {
 			element.classList.add('hidden');
-			
+
 		});
 
-		var sub=document.querySelector("select");
-		console.log(sub.value);
-		var table=document.querySelector(".s"+sub.value);
-  		table.classList.toggle('hidden');
+		var code=document.querySelector("select");
+		console.log(code.value);
+        var table=document.querySelector("table");
+        var i=2;
+        for(;i<table.rows.length;i++)
+        {
+            table.rows[i].classList.add('hidden');
+            if(table.rows[i].cells[0].innerHTML==code.value)
+                  table.rows[i].classList.toggle('hidden');
+        }
   	}
 </script>
 <div class="ui container center aligned">
 	<div class="ui form">
 		<div class="fields">
-		  <select class="ui dropdown eleven wide field">
+		  <div class="one wide field"></div>
+		  <select class="ui dropdown ten wide field">
 			<option value="">Select Subject</option>
 			<% data.forEach((sub)=>{ %>
 				<option value="<%- sub.code %>"><%= sub.code %> <%= sub.name %></option>
 				<% }) %>
 		  </select>
 		  <div class="one wide field"></div>
-		  <button class="four wide field" onclick="show()">Submit</button>
-		</div>
+		  <button class="ui button blue three wide field " onclick="show()">Submit</button>
+		  <div class="one wide field"></div>
+        </div>        
 	  </div>    
 <div class="ui container center aligned">
+	<table class="ui celled structured table">
+		<thead>
+			<tr>
+                <th rowspan="2" class="hidden">code</th>
+			    <th rowspan="2">Id</th>
+				<th rowspan="2">Name</th>
+				<th class="center aligned" colspan="<%= date.length %> ">Date</th>
+			</tr>
+			<tr>
+                <% date.forEach((i)=>{ %>
+                    <th><%= i %> </th>
+                <% }) %>
+			</tr>
+		</thead>
+	<tbody>  
   <% data.forEach((sub)=>{ %>
-    <div class="s<%= sub.code %> hidden data" >
+    
     <% sub.attendance.forEach((record)=>{ %>
-      <div>
-        <%= record.id %>
-        <%= record.name %>
-        <%= record.date %>
-        <%= record.a %>
-      </div>
+        <tr class="hidden">
+            <td class="hidden"><%= sub.code %></td>
+            <td><%= record.id %></td>
+            <td><%= record.name %></td>  
+            <% date.forEach((i)=>{ %>
+                <% if (i==record.date) { %>
+                    <td class="center aligned"><i class="large green checkmark icon"></i></td>
+                <% } else { %>
+                    <td></td>
+                <% } %>
+            <% }) %>
+
+        </tr>
     <% }) %>
-    </div>
-  <% }) %>
+    <% }) %>
+    </tbody>
 </div>
 
 <%- include("partials/footer.ejs") %>
