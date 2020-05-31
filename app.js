@@ -190,6 +190,23 @@ app.get("/faculty",(req,res)=>{
     pageRenderingData=null;
 });
 
+app.get("/student",(req,res)=>{
+    var data=[];
+    
+    students[3].course.forEach(c=>{
+        var find=courses.find(function(i) {
+            if(i.code == c.code)
+                return true;
+        });
+        data.push({
+            code:c.code,
+            name:find.name,
+            schedule: find.schedule
+        });
+    });
+    res.render("student",{student:students[3],data:data});
+});
+
 app.post("/faculty",(req,res)=>{
     var facultyCourses=[];
     var attendances=[];
