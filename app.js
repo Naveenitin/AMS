@@ -4,6 +4,7 @@ var bodyparser = require("body-parser");
 var mongoose = require("mongoose");
 
 mongoose.connect("mongodb://localhost:27017/ams",{useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.set('useFindAndModify', false);
 app.use(bodyparser.urlencoded({extended: true}));
 app.use(express.static("public"));
 app.set("view engine","ejs");
@@ -63,8 +64,36 @@ app.get("/attendance/:code",async (req,res)=>{
     res.render("attendance",{name:fac.name,code:req.params.code,courses:facultyCourses,list:list});
 });
 app.post("/attendance/:code",async (req,res)=>{
+    var c= await courseFind({code:req.params.code});
+    c.schedule.push(req.body.date);
+    c.idStudent = c.idStudent.sort();
+    await courseUpdate(c._id,c);    
+    console.log(c.idStudent);
+    for(let i=0;i<c.idStudent.length;i++){
+        var id=c.idStudent[i];
+        var st=await studentFind({id:id});
+        if(req.body.attendance[i]=='Present'){
+            for(let j=0;j<st.course.length;j++)
+            {
+                if(st.course[j].code==req.params.code){
+                    st.course[j].attendance.push('p');
+                    break;
+                }
+            }
+        }
+        else{
+            for(let j=0;j<st.course.length;j++)
+            {
+                if(st.course[j].code==req.params.code){
+                    st.course[j].attendance.push('');
+                    break;
+                }
+            }
+        }
+        await studentUpdate(st._id,st);    
+    }
     console.log(req.body);
-    res.send(req.params);
+    res.redirect("/faculty");
 });
 
 function studentFind(query){
@@ -101,6 +130,45 @@ function facultyFind(query){
     });
 } 
 
+
+function studentUpdate(id,newObj){
+    return new Promise(function(resolve,reject){
+        student.findByIdAndUpdate(id,newObj,function(err,obj){
+            if(err)
+                console.log(err)
+            else{
+                console.log("Data Updated");
+                resolve(true);
+
+            }
+        });
+    });
+}
+function courseUpdate(id,newObj){
+    return new Promise(function(resolve,reject){
+        course.findByIdAndUpdate(id,newObj,function(err,obj){
+            if(err)
+                console.log(err)
+            else{
+                console.log("Data Updated");
+                resolve(true);
+
+            }
+        });
+    });
+}
+function facultyUpdate(id,newObj){
+    return new Promise(function(resolve,reject){
+        faculty.findByIdAndUpdate(id,newObj,function(err,obj){
+            if(err)
+                console.log(err)
+            else{
+                console.log("Data Updated");
+                resolve(true);
+            }
+        });
+    });
+} 
 
 app.get("/student",async (req,res)=>{
     var st= await studentFind({id:201852022});
