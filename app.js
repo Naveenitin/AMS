@@ -36,13 +36,35 @@ var courseSchema = new mongoose.Schema({
 });
 var course = mongoose.model("course",courseSchema);
 var pageRenderingData=null;
+var logedIn=null;
 
 app.get("/faculty",(req,res)=>{
-    if(pageRenderingData!=null)
-        res.render("faculty",pageRenderingData);
-    else
-        res.redirect("/");
-    pageRenderingData=null;
+    res.render("faculty",pageRenderingData);
+});
+
+app.get("/attendance/:code",async (req,res)=>{
+    var facultyCourses=[];
+    var list=[];
+    var fac= await facultyFind({id:logedIn});
+    for(let i=0;i<fac.code.length;i++){
+        var find = await courseFind({code:fac.code[i]});
+        find.idStudent=find.idStudent.sort();
+        facultyCourses.push(find);        
+    }
+    var c= await courseFind({code:req.params.code});
+    var sts=c.idStudent.sort();
+    for(let i=0;i<sts.length;i++){
+        var st = await studentFind({id:sts[i]});
+        list.push({
+            id:st.id,
+            name:st.name  
+        });
+    }
+    res.render("attendance",{name:fac.name,code:req.params.code,courses:facultyCourses,list:list});
+});
+app.post("/attendance/:code",async (req,res)=>{
+    console.log(req.body);
+    res.send(req.params);
 });
 
 function studentFind(query){
@@ -118,6 +140,7 @@ app.post("/faculty",async (req,res)=>{
         }
         attendances.push(attend);
     }
+    logedIn=req.body.user;
     pageRenderingData={courses:facultyCourses,name:fac.name,attendances:attendances};
     res.redirect("/faculty")
 

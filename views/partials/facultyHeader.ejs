@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>AMS</title>
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
+        <link rel="stylesheet" type="text/css" href="/stylesheets/app.css">
+    </head>
+    <body>
+        <div class="ui fixed inverted menu">
+            <div class="ui container">
+                <div class="header item">
+                    <i id="logo" class="code icon"></i>AMS
+                </div>
+            </div>
+            <a href="#" class="item"><%= name %> </a>
+            <div class="item" style="padding: 0px;">
+
+                <div class="ui compact menu inverted">
+                    <div class="ui simple dropdown item">                    
+                        <i id="logo" class="calendar plus outline icon"></i>Add Attendence
+                        <i class="dropdown icon"></i>
+                        <div class="menu">
+                            <% courses.forEach((course)=>{ %>
+                                    <div class="item"><a href="/attendance/<%- course.code %>" class="ui black inverted"><%= course.code %>&nbsp;<%= course.name %></a></div>
+                            <% }) %>
+                        </div>        
+                    </div>
+                </div>
+            </div>
+            <a href="/" class="item">Log Out</a>
+        </div>

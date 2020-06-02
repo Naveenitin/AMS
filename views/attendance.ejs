@@ -1,0 +1,84 @@
+<%- include("partials/facultyHeader.ejs") %>
+<script>
+    function show(s,id){
+        var showHere=document.getElementById("showHere"+id);
+        if(s=='p'){
+            showHere.innerHTML='<span style="color:green;">Present</span>';
+        }
+        else{
+            showHere.innerHTML='<span style="color:red">Absent</span>';
+        }
+    }
+    var btn=document.getElementById("btn");
+    btn.addEventListener("mouseenter",(event)=>{
+        event.target.style.color = "purple";
+        var arr=document.getElementsByClassName("showHere");
+        for(let i=0;i<arr.length;i++)
+        {
+            if(arr[i].textContent=="--------")
+                btn.disabled=true;
+            console.log(no);
+        }
+    })
+    function f()
+    {
+        var arr=document.getElementsByClassName("showHere");
+        for(let i=0;i<arr.length;i++)
+        {
+            if(arr[i].textContent=="--------")
+            {
+                document.getElementById("hidden").innerHTML='<div class="ui error message"><div class="header">Error: Please mark attendance of all the student before submit!!</div></div>';
+                return false;
+            }    
+            
+        }
+        var data=document.getElementsByClassName("data");
+        for(let i=0;i<arr.length;i++)
+        {
+            data[i].setAttribute("value",arr[i].innerText);
+        }
+        return true;
+    }
+</script>
+
+<div class="ui container right aligned" style="margin: 20px;">
+    <form action="/attendance/<%= code %> " method="POST" onsubmit="return f()">
+        <input type="date" name="date" class="huge ui primary button inverted" required>
+        <% list.forEach((student,index) => { %>
+        <input class="data" type="hidden" name="attendance[<%= index %>]">            
+        <% }) %>
+        <button class="huge ui primary button" id="btn" type="submit" >Save</button>
+    </form>
+</div>
+<div class="ui container left aligned" id="hidden" style="margin: 20px;">
+</div>
+
+<div class="ui container center aligned">
+    <table class="ui celled structured table">
+        <thead>
+            <tr>
+                <th class="center aligned">Sr.No.</th>
+                <th class="center aligned">Id</th>
+                <th class="center aligned">Name</th>
+                <th class="center aligned">Attendance</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>  
+            <% list.forEach((student,index) => { %>
+                <tr>
+                    <td><%- index+1 %> </td>
+                    <td><%= student.id %> </td>
+                    <td><%= student.name %> </td>    
+                    <td class="center aligned showHere" id="showHere<%- index+1 %>">--------</td>
+                    <td class="center aligned"><button class="ui positive basic button" onclick="show('p','<%- index+1 %>') ">Present</button></td>
+                    <td class="center aligned"><button class="ui negative basic button" onclick="show('a','<%- index+1 %>') ">Absent</button></td>
+                </tr>
+        
+            <% }) %>
+        </tbody>
+    </table>
+    
+
+<%- include("partials/footer.ejs") %>
