@@ -21,7 +21,7 @@
                             count++;
                     }) 
                 %>
-                <tr onclick="location.href='student/<%= c. %>/<%= c.code %>'">
+                <tr onclick='location.href="student/<%= student.name %>/<%= data.code %>"'>
                     <td><%- i+1 %> </td>
                     <td><%= data[i].code %> </td>
                     <td><%= data[i].name %> </td>

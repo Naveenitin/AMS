@@ -3,13 +3,10 @@ var mongoose = require("mongoose");
 
 mongoose.connect("mongodb://localhost:27017/ams",{useNewUrlParser: true, useUnifiedTopology: true});
 
-var facultySchema = new mongoose.Schema({
-        id : String,
-        password : String,
-        name : String,
-        code : Array
-});
-var faculty = new mongoose.model("faculty",facultySchema);
+//  external modules
+var faculty = require("./modules/faculty");
+var student = require("./modules/student");
+var course = require("./modules/course");
 
 faculty.create([
     {
@@ -26,13 +23,6 @@ faculty.create([
     }
 ]); 
 
-var studentSchema = new mongoose.Schema({
-    id:String,
-    password:String,
-    name:String,
-    course:Array
-});
-var student = mongoose.model("student",studentSchema);
 student.create([
     {
         id:"201852022",
@@ -148,14 +138,7 @@ student.create([
     }
 ]);
 
-var courseSchema = new mongoose.Schema({
-    code : Number,
-    name : String,
-    schedule : Array,
-    idStudent : Array
 
-});
-var course = mongoose.model("course",courseSchema);
 course.create([
     {
         code:100,
@@ -186,4 +169,5 @@ course.create([
     }
 
 ]);
+
 console.log("done");

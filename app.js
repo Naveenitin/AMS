@@ -3,6 +3,12 @@ var app = express();
 var bodyparser = require("body-parser");
 var mongoose = require("mongoose");
 
+//  external modules
+var faculty = require("./modules/faculty");
+var student = require("./modules/student");
+var course = require("./modules/course");
+
+
 mongoose.connect("mongodb://localhost:27017/ams",{useNewUrlParser: true, useUnifiedTopology: true});
 mongoose.set('useFindAndModify', false);
 app.use(bodyparser.urlencoded({extended: true}));
@@ -14,30 +20,7 @@ app.get("/",function(req,res){
     res.render("index");
 });
 
-var facultySchema = new mongoose.Schema({
-    id : String,
-    password : String,
-    name : String,
-    code : Array
-});
-var faculty = new mongoose.model("faculty",facultySchema);
 
-var studentSchema = new mongoose.Schema({
-    id: String,
-    password: String,
-    name: String,
-    course: Array
-});
-var student = mongoose.model("student",studentSchema);
-
-var courseSchema = new mongoose.Schema({
-    code : Number,
-    name : String,
-    schedule : Array,
-    idStudent : Array
-
-});
-var course = mongoose.model("course",courseSchema);
 var pageRenderingData=null;
 var logedIn=null;
 
