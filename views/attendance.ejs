@@ -44,6 +44,7 @@
 <div class="ui container right aligned" style="margin: 20px;">
     <form action="/attendance/<%= code %> " method="POST" onsubmit="return f()">
         <input type="date" name="date" class="huge ui primary button inverted" required>
+        <input type="hidden" name="fCode" value="<%= id %>">
         <% list.forEach((student,index) => { %>
         <input class="data" type="hidden" name="attendance[<%= index %>]">            
         <% }) %>

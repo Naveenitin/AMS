@@ -4,8 +4,8 @@ var mongoose = require("mongoose");
 mongoose.connect("mongodb://localhost:27017/ams",{useNewUrlParser: true, useUnifiedTopology: true});
 
 var facultySchema = new mongoose.Schema({
-        id : Number,
-        password : Number,
+        id : String,
+        password : String,
         name : String,
         code : Array
 });
@@ -13,28 +13,30 @@ var faculty = new mongoose.model("faculty",facultySchema);
 
 faculty.create([
     {
-        id:1,
-        password:1,   
+        id:"1",
+        password:"1",   
         name:"Dr. Naveen Kumar",
         code:[101,210]
     },
     {
-        id:2,
-        password:2,
+        id:"2",
+        password:"2",
         name:"Ajay Nath",
         code:[100,101]
     }
 ]); 
 
 var studentSchema = new mongoose.Schema({
-    id:Number,
+    id:String,
+    password:String,
     name:String,
     course:Array
 });
 var student = mongoose.model("student",studentSchema);
 student.create([
     {
-        id:201852022,
+        id:"201852022",
+        password:"201852022",
         name:"Naveen Gaur",
         course:[
             {
@@ -50,7 +52,8 @@ student.create([
         ]
     },
     {
-        id:201852019,
+        id:"201852019",
+        password:"201852019",
         name:"Mansi Gupta",
         course:[
             {
@@ -66,7 +69,8 @@ student.create([
         ]
     },
     {
-        id:201852008,
+        id:"201852008",
+        password:"201852008",
         name:"Faizan",
         course:[
             {
@@ -77,7 +81,8 @@ student.create([
         ]
     },
     {
-        id:201852005,
+        id:"201852005",
+        password:"201852005",
         name:"AP",
         course:[
             {
@@ -98,7 +103,8 @@ student.create([
         ]
     },
     {
-        id:201852023,
+        id:"201852023",
+        password:"201852023",
         name:"Het Patel",
         course:[
             {
@@ -119,7 +125,8 @@ student.create([
         ]
     },
     {
-        id:201852024,
+        id:"201852024",
+        password:"201852024",
         name:"Prachi Desai",
         course:[
             {

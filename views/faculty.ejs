@@ -40,8 +40,8 @@
                     <th class="center aligned" colspan="<%= courses[i].schedule.length %> ">Date</th>
                 </tr>
                 <tr>
-                    <% courses[i].schedule.forEach((s)=>{ %>
-                        <th><%= s %> </th>
+                    <% courses[i].schedule.forEach((s)=>{ var d=new Date(s)%>
+                        <th><%= d.toDateString() %> </th>
                     <% }) %>
                 </tr>
             </thead>

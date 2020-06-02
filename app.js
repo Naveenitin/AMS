@@ -9,21 +9,23 @@ app.use(bodyparser.urlencoded({extended: true}));
 app.use(express.static("public"));
 app.set("view engine","ejs");
 
+var sIdlogedIn=null;
 app.get("/",function(req,res){
     res.render("index");
 });
 
 var facultySchema = new mongoose.Schema({
-    id : Number,
-    password : Number,
+    id : String,
+    password : String,
     name : String,
     code : Array
 });
 var faculty = new mongoose.model("faculty",facultySchema);
 
 var studentSchema = new mongoose.Schema({
-    id:Number,
-    name:String,
+    id: String,
+    password: String,
+    name: String,
     course: Array
 });
 var student = mongoose.model("student",studentSchema);
@@ -61,7 +63,7 @@ app.get("/attendance/:code",async (req,res)=>{
             name:st.name  
         });
     }
-    res.render("attendance",{name:fac.name,code:req.params.code,courses:facultyCourses,list:list});
+    res.render("attendance",{name:fac.name,id:fac.id,code:req.params.code,courses:facultyCourses,list:list});
 });
 app.post("/attendance/:code",async (req,res)=>{
     var c= await courseFind({code:req.params.code});
@@ -93,6 +95,30 @@ app.post("/attendance/:code",async (req,res)=>{
         await studentUpdate(st._id,st);    
     }
     console.log(req.body);
+    var facultyCourses=[];
+    var attendances=[];
+    var fac= await facultyFind({id:req.body.fCode});
+    for(let i=0;i<fac.code.length;i++){
+        var attend = [];
+        var find = await courseFind({code:fac.code[i]});
+        find.idStudent=find.idStudent.sort();
+        facultyCourses.push(find);
+        for(let j=0;j<find.idStudent.length;j++){
+            var st = await studentFind({id:find.idStudent[j]});
+            var attendanceObj = st.course.find(function(c) {
+                if(c.code == fac.code[i])
+                    return true;
+            });
+
+            attend.push({
+                id:st.id,
+                name:st.name,
+                attendance:attendanceObj.attendance
+            });
+        }
+        attendances.push(attend);
+    }
+    pageRenderingData={courses:facultyCourses,name:fac.name,attendances:attendances};
     res.redirect("/faculty");
 });
 
@@ -171,7 +197,7 @@ function facultyUpdate(id,newObj){
 } 
 
 app.get("/student",async (req,res)=>{
-    var st= await studentFind({id:201852022});
+    var st= await studentFind({id:sIdlogedIn});
     var data=[];
     for(let i=0;i<st.course.length;i++){
         var obj=await courseFind({code:st.course[i].code});
@@ -184,34 +210,48 @@ app.get("/student",async (req,res)=>{
     res.render("student",{student:st,data:data});
 });
 
+app.get("/logout",(req,res)=>{
+    logedIn=null;
+    sIdlogedIn=null;
+    res.redirect("/");
+});
+
 app.post("/faculty",async (req,res)=>{
-    var facultyCourses=[];
-    var attendances=[];
     var fac= await facultyFind({id:req.body.user,password:req.body.pass});
-    for(let i=0;i<fac.code.length;i++){
-        var attend = [];
-        var find = await courseFind({code:fac.code[i]});
-        find.idStudent=find.idStudent.sort();
-        facultyCourses.push(find);
-        for(let j=0;j<find.idStudent.length;j++){
-            var st = await studentFind({id:find.idStudent[j]});
-            var attendanceObj = st.course.find(function(c) {
-                if(c.code == fac.code[i])
-                    return true;
-            });
+    if(fac!=undefined)
+    {   
+        var facultyCourses=[];
+        var attendances=[];
+        for(let i=0;i<fac.code.length;i++){
+            var attend = [];
+            var find = await courseFind({code:fac.code[i]});
+            find.idStudent=find.idStudent.sort();
+            facultyCourses.push(find);
+            for(let j=0;j<find.idStudent.length;j++){
+                var st = await studentFind({id:find.idStudent[j]});
+                var attendanceObj =await st.course.find(async function(c) {
+                    if(c.code == fac.code[i])
+                        return true;
+                });
 
-            attend.push({
-                id:st.id,
-                name:st.name,
-                attendance:attendanceObj.attendance
-            });
+                attend.push({
+                    id:st.id,
+                    name:st.name,
+                    attendance:attendanceObj.attendance
+                });
+            }
+            attendances.push(attend);
         }
-        attendances.push(attend);
+        logedIn=req.body.user;
+        pageRenderingData={courses:facultyCourses,name:fac.name,attendances:attendances};
+        res.redirect("/faculty")
     }
-    logedIn=req.body.user;
-    pageRenderingData={courses:facultyCourses,name:fac.name,attendances:attendances};
-    res.redirect("/faculty")
-
+    var st= await studentFind({id:req.body.user,password:req.body.pass});
+    if(st!=undefined)
+    {   sIdlogedIn=st.id;
+        res.redirect("/student");
+    }
+    res.redirect("/");
 });
 
 app.listen(3000,()=>{

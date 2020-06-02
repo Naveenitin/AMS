@@ -1,4 +1,4 @@
-<%- include("partials/header.ejs") %>
+<%- include("partials/studentHeader.ejs") %>
 <div class="ui container center aligned">
     <div class="ui form">
         <h1>Welcome <%= student.name %></h1> 
@@ -15,17 +15,17 @@
             <tbody>
             <% var count;for( let i = 0; i < data.length; i++ ) { %>
                 <%  
-                    count=0;
+                    count=0.0;
                     student.course[i].attendance.forEach(element => { 
                         if(element=="p")
                             count++;
                     }) 
                 %>
-                <tr>
+                <tr onclick="location.href='student/<%= c. %>/<%= c.code %>'">
                     <td><%- i+1 %> </td>
                     <td><%= data[i].code %> </td>
                     <td><%= data[i].name %> </td>
-                    <td><%= count %> </td>
+                    <td><%- (count*100/student.course[i].attendance.length).toFixed(2) %> %</td>
                 </tr>
             <% } %>
             </tbody>
